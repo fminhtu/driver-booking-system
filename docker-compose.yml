@@ -1,0 +1,15 @@
+version: '2.1'
+
+services:
+  api-gateway:
+    image: 60d77ce11f57
+    build: .
+    ports:
+      - 3000:3000
+    restart: always
+  driver-management:
+    image: 86656e5f
+    build: .
+    ports:
+      - 8080:8080
+    restart: always
