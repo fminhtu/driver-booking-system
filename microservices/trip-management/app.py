@@ -30,32 +30,6 @@ customers = []
 index = -1
 
 
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        # jwt is passed in the request header
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-        # return 401 if token is not passed
-        if not token:
-            return jsonify({'message' : 'Token is missing !!'}), 401
-  
-        try:
-            # decoding the payload to fetch the stored details
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = User.query\
-                .filter_by(public_id = data['public_id'])\
-                .first()
-        except:
-            return jsonify({
-                'message' : 'Token is invalid !!'
-            }), 401
-        # returns the current logged in users contex to the routes
-        return  f(current_user, *args, **kwargs)
-  
-    return decorated
-
 # register trip
 @app.route('/driver-register-trip', methods =['POST'])
 def create():
@@ -64,9 +38,9 @@ def create():
     if None:
         drivers.append(data.get('username'))
 
-        return make_response('Successfully registered.', 201)
+        return jsonify({'message' : 'Successfully registered.'}), 201
     else:
-        return make_response('Error.', 202)
+        return jsonify({'message' : 'Error.'}), 401
 
 @app.route('/passenger-register-trip', methods =['POST'])
 def create():
@@ -75,9 +49,9 @@ def create():
     if None:
         passengers.append(data.get('username'))
 
-        return make_response('Successfully registered.', 201)
+        return jsonify({'message' : 'Successfully registered.'}), 201
     else:
-        return make_response('Error.', 202)
+        return jsonify({'message' : 'Error.'}), 401
         
 # check ready
 
@@ -109,11 +83,10 @@ def create():
         db.session.add(trip)
         db.session.commit()
   
-        return make_response('Successfully created.', 201)
+        return jsonify({'message' : 'Successfully created.'}), 201
     else:
-        # returns 202 if trip already exists
-        return make_response('Trip already exists.', 202)
-
+        # returns 401 if trip already exists
+        return jsonify({'message' : 'Trip already exists.'}), 401
 
 
 if __name__ == "__main__":

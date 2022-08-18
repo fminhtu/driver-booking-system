@@ -60,7 +60,7 @@ def login():
 
     # checking for existing passenger
     passenger = Passenger.query\
-        .filter_by(email = email)\
+        .filter_by(username=username)\
         .first()
 
     if passenger:
@@ -69,10 +69,10 @@ def login():
         passenger.phone = phone
         db.session.commit()
   
-        return make_response('Successfully edited.', 201)
+        return jsonify({'message' : 'Successfully edited.'}), 201 
     else:
-        # returns 202 if passenger already exists
-        return make_response('Passenger is not exists.', 202)
+        # returns 401 if passenger already exists
+        return jsonify({'message' : 'Passenger is not exists'}), 401 
     
   
 # create route
@@ -99,10 +99,10 @@ def create():
         db.session.add(passenger)
         db.session.commit()
   
-        return make_response('Successfully created.', 201)
+        return jsonify({'message' : 'Successfully created.'}), 201 
     else:
-        # returns 202 if passenger already exists
-        return make_response('Passenger already exists.', 202)
+        # returns 401 if passenger already exists
+        return jsonify({'message' : 'Passenger already exists.'}), 401 
 
 
 

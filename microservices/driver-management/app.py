@@ -74,10 +74,10 @@ def login():
         driver.licence_plate = licence_plate
         db.session.commit()
   
-        return make_response('Successfully edited.', 201)
+        return jsonify({'message' : 'Successfully edited.'}), 201 
     else:
-        # returns 202 if driver already exists
-        return make_response('Driver is not exists.', 202)
+        # returns 401 if driver already exists
+        return jsonify({'message' : 'Driver is not exists'}), 401 
     
   
 # create route
@@ -106,10 +106,10 @@ def create():
         db.session.add(driver)
         db.session.commit()
   
-        return make_response('Successfully created.', 201)
+        return jsonify({'message' : 'Successfully created.'}), 201 
     else:
-        # returns 202 if driver already exists
-        return make_response('Driver already exists.', 202)
+        # returns 401 if driver already exists
+        return jsonify({'message' : 'Driver already exists.'}), 401 
 
 
 

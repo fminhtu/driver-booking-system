@@ -87,38 +87,27 @@ def login():
   
     if not auth or not auth.get('username') or not auth.get('password'):
         # returns 401 if any username or / and password is missing
-        return make_response(
-            'Could not verify',
-            401,
-            {'WWW-Authenticate' : 'Basic realm ="Login required !!"'}
-        )
+        return jsonify({'message' : 'Could not verify'}), 401
   
     user = User.query\
         .filter_by(username=auth.get('username'))\
         .first()
   
     if not user:
-        # returns 401 if user does not exist
-        return make_response(
-            'Could not verify',
-            401,
-            {'WWW-Authenticate' : 'Basic realm ="User does not exist !!"'}
-        )
+        # returns 401 if user does not existz
+        return jsonify({'message' : 'Could not verify'}), 401
   
     if check_password_hash(user.password, auth.get('password')):
         # generates the JWT Token
         token = jwt.encode({
             'public_id': user.public_id,
-            'exp' : datetime.utcnow() + timedelta(days=7)
+            'exp' : datetime.utcnow() + timedelta(days=30)
         }, app.config['SECRET_KEY'], algorithm="HS256")
   
         return make_response(jsonify({'token' : token}), 201)
     # returns 403 if password is wrong
-    return make_response(
-        'Could not verify',
-        403,
-        {'WWW-Authenticate' : 'Basic realm ="Wrong Password !!"'}
-    )
+    return jsonify({'message' : 'Could not verify'}), 401
+    
 
 # send request create new profile to microservices
 
@@ -127,18 +116,18 @@ def create_driver(request):
 
     # sucessfully created a driver
     if response.status_code == 201: 
-        return make_response("Successfully created", 201)
- 
-    return make_response("Cannot created", 202)   
+        return jsonify({'message' : 'Successfully created'}), 201
+
+    return jsonify({'message' : 'Cannot created'}), 401
 
 def create_passenger(request):
     response = requests.post('http://127.0.0.1:5002/create', json=request.json)
 
     # sucessfully created a driver
     if response.status_code == 201: 
-        return make_response("Successfully created", 201)
+        return jsonify({'message' : 'Successfully created'}), 201
  
-    return make_response("Cannot created", 202)   
+    return jsonify({'message' : 'Cannot created'}), 401
 
 # signup route
 @app.route('/register', methods =['POST'])
@@ -174,48 +163,44 @@ def register():
             #create passenger profile
             create_passenger(request)
 
-
-        return make_response('Successfully registered.', 201)
+        return jsonify({'message' : 'Successfully registered'}), 201
     else:
-        # returns 202 if user already exists
-        return make_response('User already exists. Please Log in.', 202)
+        # returns 401 if user already exists
+        return jsonify({'message' : 'User already exists. Please Log in.'}), 401
 
 # edit a profile
-@app.route('/edit-driver-profile', methods =['POST'])
-@token_required
-def edit_driver_profile(current_user):
-    response = requests.post('http://127.0.0.1:5001/edit', json=request.json)
-
-    if response.status_code == 201: 
-        return make_response("Successfully edited", 201)
- 
-    return make_response("Cannot edit", 202)   
-
-@app.route('/edit-passenger-profile', methods =['POST'])
+@app.route('/edit-profile', methods =['POST'])
 @token_required
 def edit_passenger_profile(current_user):
-    response = requests.post('http://127.0.0.1:5002/edit', json=request.json)
+    data = request.json 
+    role = data.get('role')
+    response = ""
 
-    if response.status_code == 201: 
-        return make_response("Successfully edited", 201)
- 
-    return make_response("Cannot edit", 202)   
+    if role == 'driver':
+        response = requests.post('http://127.0.0.1:5001/edit', json=request.json)
+    elif role == 'passenger':
+        response = requests.post('http://127.0.0.1:5002/edit', json=request.json)
+    else:
+        return jsonify({'message' : 'error'}), 401  
 
+    return response.json()
+    
 # get a profile
-@app.route('/get-driver-profile', methods =['GET'])
+@app.route('/get-profile', methods =['GET'])
 @token_required
 def get_driver_profile(current_user):
-    response = requests.get('http://127.0.0.1:5001/get', json=request.json)
+    data = request.json 
+    role = data.get('role')
+    if role == 'driver':
+        response = requests.get('http://127.0.0.1:5001/get', json=request.json)
+
+    elif role == 'passenger':
+        response = requests.get('http://127.0.0.1:5002/get', json=request.json)
+    else:   
+        return jsonify({'message' : 'error'}), 401  
 
     return response.json()
- 
-
-@app.route('/get-passenger-profile', methods =['GET'])
-@token_required
-def get_passenger_profile(current_user):
-    response = requests.get('http://127.0.0.1:5002/get', json=request.json)
-
-    return response.json()
+   
 
 # port = int(os.environ.get('PORT', 5000))
 if __name__ == "__main__":
