@@ -63,7 +63,7 @@ def login():
 
     # checking for existing driver
     driver = Driver.query\
-        .filter_by(email = email)\
+        .filter_by(username = username)\
         .first()
 
     if driver:

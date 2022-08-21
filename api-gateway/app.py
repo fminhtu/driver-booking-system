@@ -186,7 +186,7 @@ def edit_passenger_profile(current_user):
     return response.json()
     
 # get a profile
-@app.route('/get-profile', methods =['GET'])
+@app.route('/get-profile', methods =['POST'])
 @token_required
 def get_driver_profile(current_user):
     data = request.json 
