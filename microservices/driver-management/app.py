@@ -16,7 +16,7 @@ app = Flask(__name__)
 # INSTEAD CREATE A .env FILE AND STORE IN IT
 app.config['SECRET_KEY'] = 'your secret key'
 # database name
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nintendo123@172.104.167.232:8201/driver-call'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/driver.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # creates SQLALCHEMY object
 

@@ -20,6 +20,7 @@ class Trip(db.Model):
     dest_long = db.Column(db.String(80))
 
     time = db.Column(db.String(80))
+    
 
 
 
