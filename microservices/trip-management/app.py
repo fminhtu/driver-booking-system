@@ -16,12 +16,13 @@ app = Flask(__name__)
 # INSTEAD CREATE A .env FILE AND STORE IN IT
 app.config['SECRET_KEY'] = 'your secret key'
 # database name
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/trip.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Nintendo123@172.104.167.232:8201/trip-call'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # creates SQLALCHEMY object
 
 # initialize dabasae
 db.init_app(app)
+db.create_all(app=app)
 app.app_context().push()
 
 # driver & customer list 
@@ -32,7 +33,7 @@ index = -1
 
 # register trip
 @app.route('/driver-register-trip', methods =['POST'])
-def create():
+def createDriver():
     data = request.json 
   
     if None:
@@ -43,7 +44,7 @@ def create():
         return jsonify({'message' : 'Error.'}), 401
 
 @app.route('/passenger-register-trip', methods =['POST'])
-def create():
+def createPassenger():
     data = request.json 
 
     if None:
@@ -59,7 +60,7 @@ def create():
 
 # save route
 @app.route('/save-trip', methods =['POST'])
-def create():
+def createTrip():
     # creates a dictionary of the form data
     data = request.json 
   
