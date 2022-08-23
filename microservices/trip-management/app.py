@@ -26,72 +26,123 @@ db.create_all(app=app)
 app.app_context().push()
 
 # driver & customer list 
-drivers = []
-customers = []
+queue = {} # {driver: passenger}
+location = {}  # {driver: current location}
 index = -1
 
 
-# register trip
-@app.route('/driver-register-trip', methods =['POST'])
-def createDriver():
-    data = request.json 
-  
-    if None:
-        drivers.append(data.get('username'))
-
-        return jsonify({'message' : 'Successfully registered.'}), 201
-    else:
-        return jsonify({'message' : 'Error.'}), 401
-
-@app.route('/passenger-register-trip', methods =['POST'])
-def createPassenger():
-    data = request.json 
-
-    if None:
-        passengers.append(data.get('username'))
-
-        return jsonify({'message' : 'Successfully registered.'}), 201
-    else:
-        return jsonify({'message' : 'Error.'}), 401
-        
-# check ready
-
-
-
-# save route
-@app.route('/save-trip', methods =['POST'])
-def createTrip():
+def create_trip(request):
     # creates a dictionary of the form data
+    data = request.json
+
+    # get data from json data
+    passenger = data.get('passenger')
+    driver = data.get('driver')
+
+    origin_address = data.get('origin_address')
+    origin_lat = data.get('origin_lat')
+    origin_long = data.get('origin_long')
+
+    dest_address = data.get('dest_address')
+    dest_lat = data.get('dest_lat')
+    dest_long = data.get('dest_long')
+
+    time = data.get('time')
+    payment = data.get('payment')
+    status = data.get('status')
+
+    trip = Trip(
+        passenger_username=passenger,
+        driver_username=driver,
+        origin_address=origin_address,
+        origin_lat=origin_lat,
+        origin_long=origin_long,
+        dest_address=dest_address,
+        dest_lat=dest_lat,
+        dest_long=dest_long,
+        time=time,
+        payment=payment,
+        status=status
+    )
+    # insert trip
+    db.session.add(trip)
+    db.session.commit()
+
+    return jsonify({'message': 'Successfully created.'}), 201
+
+@app.route('/trip-request', methods =['POST'])
+def trip_request():
     data = request.json 
-  
-    # gets name, email and password
-    name, email = data.get('name'), data.get('email')
-    password = data.get('password')
-  
-    # checking for existing trip
-    trip = Trip.query\
-        .filter_by(email = email)\
-        .first()
-    if not trip:
-        # database ORM object
-        trip = Trip(
-            public_id = str(uuid.uuid4()),
-            name = name,
-            email = email,
-            password = generate_password_hash(password)
-        )
-        # insert trip
-        db.session.add(trip)
-        db.session.commit()
-  
-        return jsonify({'message' : 'Successfully created.'}), 201
-    else:
-        # returns 401 if trip already exists
-        return jsonify({'message' : 'Trip already exists.'}), 401
+    role = data.get('role')
+    username = data.get('username')
+
+    if role == 'driver':
+        if username in queue.keys():
+            return jsonify({
+                'message' : "OK",
+                'passenger': queue[username],
+                'driver': username
+            }), 201
+
+        queue[username] = None
+        return jsonify({'message' : 'Wait'}), 201
+
+    elif role == 'passenger':
+        if username in queue.values():    
+            for key in queue.keys():
+                if queue[key] == username:
+                    return jsonify({
+                        'message' : "OK",
+                        'passenger': username,
+                        'driver': key
+                    }), 201
+
+            
+        else:
+            for key in queue.keys():
+                if queue[key] == None:
+                    queue[key] = username
+                    create_trip(request)            # create new trip
+                    location[key] = [None, None]            # init current location of driver
+                    return jsonify({
+                        'message' : "Wait",
+                        'passenger': username,
+                        'driver': key
+                    }), 201
+
+    return jsonify({'message' : 'Try again'}), 400
+
+
+@app.route('/update-gps', methods =['POST'])
+def update_gps():
+    data = request.json 
+    username = data.get('username')
+    latitude = data.get('lat')
+    longitude  = data.get('long')
+    
+    if username not in location.keys():   
+        return jsonify({'message' : 'Eror'}), 401
+
+    location[username] = [latitude, longitude]
+    return jsonify({'message' : 'Updated'}), 201
+
+@app.route('/current-gps', methods =['POST'])
+def get_current_gps():
+    data = request.json 
+    username = data.get('username')
+    
+    if username not in location.keys():   
+        return jsonify({'message' : 'Eror'}), 401
+
+    return jsonify({
+        'message' : 'Updated', 
+        'lat': location[username][0],
+        'long': location[username][1]
+    }), 201
 
 
 if __name__ == "__main__":
     # setting debug to True enables hot reload
     # and also provides a debugger shell
     # if you hit an error while running the server
-    app.run(debug = True)
+    app.run(debug = True, port=5003)

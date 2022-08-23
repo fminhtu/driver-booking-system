@@ -20,6 +20,8 @@ class Trip(db.Model):
     dest_long = db.Column(db.String(80))
 
     time = db.Column(db.String(80))
+    payment = db.Column(db.String(80))
+    status = db.Column(db.String(80))
     
 
 
