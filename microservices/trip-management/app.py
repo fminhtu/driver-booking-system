@@ -28,13 +28,11 @@ app.app_context().push()
 # driver & customer list 
 queue = {} # {driver: passenger}
 location = {}  # {driver: current location}
+information = {}    # {driver: trip information}
 index = -1
 
 
-def create_trip(request):
-    # creates a dictionary of the form data
-    data = request.json
-
+def save_trip(data):
     # get data from json data
     passenger = data.get('passenger')
     driver = data.get('driver')
@@ -49,7 +47,7 @@ def create_trip(request):
 
     time = "auto fill here"
     payment = "10.000"
-    status = "processing"
+    status = "finished"
 
     trip = Trip(
         passenger_username=passenger,
@@ -102,8 +100,9 @@ def trip_request():
             for key in queue.keys():
                 if queue[key] == None:
                     queue[key] = username
-                    create_trip(request)            # create new trip
                     location[key] = [None, None]            # init current location of driver
+                    information[key] = data
+
                     return jsonify({
                         'message' : "Wait",
                         'passenger': username,
@@ -126,18 +125,25 @@ def update_gps():
     location[username] = [latitude, longitude]
     return jsonify({'message' : 'Updated'}), 201
 
-@app.route('/current-gps', methods =['POST'])
+@app.route('/trip-information', methods =['POST'])
 def get_current_gps():
     data = request.json 
     username = data.get('username')
     
+    if username not in queue.keys():   
+        return jsonify({'message' : 'driver is not found'}), 401
+
     if username not in location.keys():   
+        return jsonify({'message' : 'driver is not found'}), 401
+    
+    if username not in information.keys():   
         return jsonify({'message' : 'driver is not found'}), 401
 
     return jsonify({
         'message' : 'current gps', 
         'lat': location[username][0],
-        'long': location[username][1]
+        'long': location[username][1],
+        'information': information[username]
     }), 201
 
 
@@ -146,10 +152,19 @@ def end_trip():
     data = request.json 
     username = data.get('username')
     
+    if username not in queue.keys():   
+        return jsonify({'message' : 'driver is not found'}), 401
+
     if username not in location.keys():   
         return jsonify({'message' : 'driver is not found'}), 401
 
+    if username in information.keys():
+        save_trip(information[username])
+        # print("saved")
+        del information[username]        
+
     queue.pop(username, None)
+    location.pop(username, None)
 
     return jsonify({
         'message' : 'end trip'
@@ -159,14 +174,14 @@ def end_trip():
 def leave_trip():
     data = request.json 
     username = data.get('username')
-    
-    if username not in location.keys():   
-        return jsonify({'message' : 'driver is not found'}), 401
 
-    del queue[username]
+    if username not in queue.keys():   
+        return jsonify({'message' : 'driver is not found'}), 401
+    else:
+        del queue[username]
 
     return jsonify({
-        'message' : 'driver leave'
+        'message' : 'driver leaved'
     }), 201
 
 

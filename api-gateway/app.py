@@ -210,10 +210,10 @@ def update_gps(current_user):
     response = requests.post('http://127.0.0.1:5003/update-gps', json=request.json)
     return response.json()
 
-@app.route('/current-gps', methods =['POST'])
+@app.route('/trip-information', methods =['POST'])
 @token_required
 def current_gps(current_user):
-    response = requests.post('http://127.0.0.1:5003/current-gps', json=request.json)
+    response = requests.post('http://127.0.0.1:5003/trip-information', json=request.json)
     return response.json()
 
 @app.route('/end-trip', methods =['POST'])
