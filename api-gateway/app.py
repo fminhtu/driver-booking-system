@@ -234,7 +234,7 @@ if __name__ == "__main__":
     # setting debug to True enables hot reload
     # and also provides a debugger shell
     # if you hit an error while running the server
-    import logging
-    logging.basicConfig(filename='logging.log',level=logging.DEBUG)
+    # import logging
+    # logging.basicConfig(filename='logging.log',level=logging.DEBUG)
 
     app.run(debug=True, host='0.0.0.0', port=5000)
