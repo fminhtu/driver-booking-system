@@ -47,9 +47,9 @@ def create_trip(request):
     dest_lat = data.get('dest_lat')
     dest_long = data.get('dest_long')
 
-    time = data.get('time')
-    payment = data.get('payment')
-    status = data.get('status')
+    time = "auto fill here"
+    payment = "10.000"
+    status = "processing"
 
     trip = Trip(
         passenger_username=passenger,
@@ -153,6 +153,20 @@ def end_trip():
 
     return jsonify({
         'message' : 'end trip'
+    }), 201
+
+@app.route('/leave-trip', methods =['POST'])
+def end_trip():
+    data = request.json 
+    username = data.get('username')
+    
+    if username not in location.keys():   
+        return jsonify({'message' : 'driver is not found'}), 401
+
+    del queue[username]
+
+    return jsonify({
+        'message' : 'driver leave'
     }), 201
 
 
