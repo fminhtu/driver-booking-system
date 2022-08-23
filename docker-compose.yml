@@ -2,14 +2,26 @@ version: '2.1'
 
 services:
   api-gateway:
-    image: 60d77ce11f57
+    image: 9bd848c03d34
     build: .
     ports:
-      - 3000:3000
+      - 4000:4000
     restart: always
   driver-management:
-    image: 86656e5f
+    image: 8783bcafa096
     build: .
     ports:
-      - 8080:8080
+      - 5000:5000
+    restart: always
+  passenger-management:
+    image: bbde19995653
+    build: .
+    ports:
+      - 6000:6000
+    restart: always
+  trip-management:
+    image: 449e326f82aa
+    build: .
+    ports:
+      - 7000:7000
     restart: always

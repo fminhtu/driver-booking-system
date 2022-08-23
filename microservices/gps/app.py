@@ -20,7 +20,14 @@ def trip_request():
     response = requests.get(url, ploads)
 
     return response.json()
-                
+
+@app.route('/gps_example_1', methods =['POST'])
+def trip_request():
+    return None   
+
+@app.route('/gps_example_2', methods =['POST'])
+def trip_request():
+    return None   
 
 if __name__ == "__main__":
     # setting debug to True enables hot reload
