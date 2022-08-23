@@ -2,3 +2,4 @@ Flask-RESTful
 PyJWT
 Flask-SQLAlchemy
 requests
+psycopg2-binary

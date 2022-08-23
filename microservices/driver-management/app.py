@@ -22,7 +22,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # initialize dabasae
 db.init_app(app)
+# becareful this code
+# db.drop_all(app=app)
 db.create_all(app=app)
+
 app.app_context().push()
   
 # Driver Database Route
@@ -101,7 +104,8 @@ def create():
             email = email,
             phone = phone,
             seed = seed,
-            licence_plate = licence_plate
+            licence_plate = licence_plate,
+            money = 0
         )
         # insert driver
         db.session.add(driver)

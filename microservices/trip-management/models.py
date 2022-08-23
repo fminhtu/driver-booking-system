@@ -19,7 +19,11 @@ class Trip(db.Model):
     dest_lat = db.Column(db.String(80))
     dest_long = db.Column(db.String(80))
 
-    time = db.Column(db.String(80))
+    time = db.Column(db.DateTime)
+
+    status = db.Column(db.String(80))
+
+    price = db.Column(db.Float)
 
 
 
