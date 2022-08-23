@@ -200,33 +200,33 @@ def get_driver_profile(current_user):
 @app.route('/trip-request', methods =['POST'])
 @token_required
 def trip_request(current_user):
-    response = requests.get('http://127.0.0.1:5003/trip-request', json=request.json)
+    response = requests.post('http://127.0.0.1:5003/trip-request', json=request.json)
     return response.json()
 
 
 @app.route('/update-gps', methods =['POST'])
 @token_required
 def update_gps(current_user):
-    response = requests.get('http://127.0.0.1:5003/update-gps', json=request.json)
+    response = requests.post('http://127.0.0.1:5003/update-gps', json=request.json)
     return response.json()
 
 @app.route('/current-gps', methods =['POST'])
 @token_required
 def current_gps(current_user):
-    response = requests.get('http://127.0.0.1:5003/current-gps', json=request.json)
+    response = requests.post('http://127.0.0.1:5003/current-gps', json=request.json)
     return response.json()
 
 @app.route('/end-trip', methods =['POST'])
 @token_required
 def end_trip(current_user):
-    response = requests.get('http://127.0.0.1:5003/end-trip', json=request.json)
+    response = requests.post('http://127.0.0.1:5003/end-trip', json=request.json)
     return response.json()
 
 
 @app.route('/leave-trip', methods =['POST'])
 @token_required
-def end_trip(current_user):
-    response = requests.get('http://127.0.0.1:5003/leave-trip', json=request.json)
+def leave_trip(current_user):
+    response = requests.post('http://127.0.0.1:5003/leave-trip', json=request.json)
     return response.json()
 
 # port = int(os.environ.get('PORT', 5000))
