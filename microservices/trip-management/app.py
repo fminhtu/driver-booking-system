@@ -121,7 +121,7 @@ def update_gps():
     longitude  = data.get('long')
     
     if username not in location.keys():   
-        return jsonify({'message' : 'Eror'}), 401
+        return jsonify({'message' : 'driver is not found'}), 401
 
     location[username] = [latitude, longitude]
     return jsonify({'message' : 'Updated'}), 201
@@ -132,12 +132,27 @@ def get_current_gps():
     username = data.get('username')
     
     if username not in location.keys():   
-        return jsonify({'message' : 'Eror'}), 401
+        return jsonify({'message' : 'driver is not found'}), 401
 
     return jsonify({
-        'message' : 'Updated', 
+        'message' : 'current gps', 
         'lat': location[username][0],
         'long': location[username][1]
+    }), 201
+
+
+@app.route('/end-trip', methods =['POST'])
+def end_trip():
+    data = request.json 
+    username = data.get('username')
+    
+    if username not in location.keys():   
+        return jsonify({'message' : 'driver is not found'}), 401
+
+    queue.pop(username, None)
+
+    return jsonify({
+        'message' : 'end trip'
     }), 201
 
 
