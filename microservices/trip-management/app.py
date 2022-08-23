@@ -75,6 +75,7 @@ def createTrip():
     time = data.get('time')
     price = data.get('price')
     # checking for existing trip
+
     trip = Trip(
         passenger_username=username_passenger,
         driver_username=username_driver,
@@ -85,8 +86,10 @@ def createTrip():
         dest_lat=dest_lat,
         dest_long=dest_long,
         time=time,
-        price=price
+        price=price,
+        status='accept'
     )
+
     # insert trip
     db.session.add(trip)
     db.session.commit()
