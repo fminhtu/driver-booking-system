@@ -156,7 +156,7 @@ def end_trip():
     }), 201
 
 @app.route('/leave-trip', methods =['POST'])
-def end_trip():
+def leave_trip():
     data = request.json 
     username = data.get('username')
     

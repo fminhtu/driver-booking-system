@@ -223,6 +223,12 @@ def end_trip(current_user):
     return response.json()
 
 
+@app.route('/leave-trip', methods =['POST'])
+@token_required
+def end_trip(current_user):
+    response = requests.get('http://127.0.0.1:5003/leave-trip', json=request.json)
+    return response.json()
+
 # port = int(os.environ.get('PORT', 5000))
 if __name__ == "__main__":
     # setting debug to True enables hot reload
