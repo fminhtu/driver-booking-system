@@ -29,7 +29,7 @@ app.app_context().push()
 # this route sends back list of passengers
 
 
-@app.route('/get', methods=['GET'])
+@app.route('/get', methods=['POST'])
 def get_all_passengers():
     # querying the database
     # for all the entries in it

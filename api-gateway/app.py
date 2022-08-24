@@ -73,7 +73,7 @@ def get_all_users(current_user):
         })
   
     return jsonify({'users': output})
-  
+
 # route for logging user in
 @app.route('/login', methods =['POST'])
 def login():
@@ -187,10 +187,10 @@ def get_driver_profile(current_user):
     data = request.json 
     role = data.get('role')
     if role == 'driver':
-        response = requests.get('http://127.0.0.1:5001/get', json=request.json)
+        response = requests.post('http://127.0.0.1:5001/get', json=request.json)
 
     elif role == 'passenger':
-        response = requests.get('http://127.0.0.1:5002/get', json=request.json)
+        response = requests.post('http://127.0.0.1:5002/get', json=request.json)
     else:   
         return jsonify({'message' : 'error'}), 401  
 
@@ -228,6 +228,22 @@ def end_trip(current_user):
 def leave_trip(current_user):
     response = requests.post('http://127.0.0.1:5003/leave-trip', json=request.json)
     return response.json()
+
+@app.route('/get-all-trip', methods =['GET'])
+def get_all_trip():
+    response = requests.get('http://127.0.0.1:5003/get-all-trip')
+    return response.json()
+
+@app.route('/gps-example-1', methods =['POST'])
+def gps_example_1():
+    response = requests.post('http://127.0.0.1:5004/gps-example-1', json=request.json)
+    return response.json()
+
+@app.route('/gps-example-2', methods =['POST'])
+def gps_example_2():
+    response = requests.post('http://127.0.0.1:5004/gps-example-2', json=request.json)
+    return response.json()
+
 
 # port = int(os.environ.get('PORT', 5000))
 if __name__ == "__main__":

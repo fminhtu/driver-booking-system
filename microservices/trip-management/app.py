@@ -184,6 +184,33 @@ def leave_trip():
         'message' : 'driver leaved'
     }), 201
 
+@app.route('/get-all-trip', methods =['GET'])
+def get_all_trip():
+    # querying the database
+    # for all the entries in it
+    trips = Trip.query.all()
+    # converting the query objects
+    # to list of jsons
+    output = []
+    for trip in trips:
+        # appending the user data json
+        # to the response list
+        output.append({
+            "passenger_username": trip.passenger_username,
+            "driver_username": trip.driver_username,
+            "origin_address": trip.origin_address,
+            "origin_lat": trip.origin_lat,
+            "origin_long": trip.origin_long,
+            "dest_address": trip.dest_address,
+            "dest_lat": trip.dest_lat,
+            "dest_long": trip.dest_long,
+            "time": trip.time,
+            "payment": trip.payment,
+            "status": trip.status
+        })
+  
+    return jsonify({"trips": output}), 201
+
 
 if __name__ == "__main__":
     # setting debug to True enables hot reload
