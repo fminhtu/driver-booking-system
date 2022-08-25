@@ -13,7 +13,7 @@ api_key = "AIzaSyD-HPqZ6715o4r5STSx5mGtlx8vqjTLZNc"
 @app.route('/gps', methods =['POST'])
 def trip_request():
     data = request.json 
-
+   
     address = data.get('address').replace(" ", "+") + "+VN"
 
     url = 'https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'.format(address, api_key)

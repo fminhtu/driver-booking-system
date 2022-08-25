@@ -8,7 +8,7 @@ import jwt
 from datetime import datetime, timedelta
 from functools import wraps
 from models import db, Trip
-
+from datetime import date
 # creates Flask object
 app = Flask(__name__)
 # configuration
@@ -32,6 +32,7 @@ information = {}    # {driver: trip information}
 index = -1
 
 
+
 def save_trip(data):
     # get data from json data
     passenger = data.get('passenger')
@@ -45,8 +46,9 @@ def save_trip(data):
     dest_lat = data.get('dest_lat')
     dest_long = data.get('dest_long')
 
-    time = "auto fill here"
-    payment = "10.000"
+    now = datetime.now()
+    time = now.strftime("%d/%m/%Y %H:%M:%S")
+    payment = "65000"
     status = "finished"
 
     trip = Trip(
@@ -67,6 +69,11 @@ def save_trip(data):
     db.session.commit()
 
     return jsonify({'message': 'Successfully created.'}), 201
+
+@app.route('/add-trip', methods =['POST'])
+def add_trip():
+    save_trip(request.json)
+    return jsonify({'message': 'Successfully added.'}), 201
 
 @app.route('/trip-request', methods =['POST'])
 def trip_request():
